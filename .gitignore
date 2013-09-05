@@ -1,0 +1,17 @@
+*.pyc
+
+# PyCharm project files
+.idea
+
+# C/C++ Python extension modules files
+*.so
+*.egg-info
+build/
+
+# Gedit and wxGlade tmp files...
+*.py~
+*.gitignore~
+*.wxg~
+
+# Sphinx
+_build/

@@ -62,6 +62,7 @@ class FrameSaver(object):
             filepath = os.path.join(self.path_to_save_to, self.filename_template.format(
                 str(self._frame_counter).zfill(6), suffix))
             cv2.imwrite(filepath, args[0])
+            self._frame_counter += 1
             logger.debug("Wrote file : {0}".format(filepath))
         else:
             raise FrameSaverException("No frame sent in!")

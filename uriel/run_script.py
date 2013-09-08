@@ -19,32 +19,26 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from __future__ import absolute_import
 
-import pprint
+import cv2
+import cv2.cv as cv
 
 from uriel.camera.providers import WebcameraProvider
-from uriel.view.frame_viewer import FrameViewer
+from uriel.view.detection_viewer import DetectionViewer
 from uriel.view.frame_saver import FrameSaver
-import uriel.utils.time as utime
+from uriel.detect.ocv_detector import OCVDetector
 
-# # Save while capturing.
-# with FrameSaver() as fs:
-#     with WebcameraProvider() as wcp:
-#         for timestamp, frame in wcp(30):
-#             fs(frame, suffix=utime.epoch_to_string(timestamp))
+detector = OCVDetector('OpenCV Haar Detector, Face->EyeROI',
+                       'haarcascade_frontalface_default.xml',
+                       'haarcascade_mcs_eyepair_big.xml')
 
-# View while capturing.
-with FrameViewer() as fv:
+with DetectionViewer() as dv:
     with WebcameraProvider() as wcp:
-        for timestamp, frame in wcp(30):
-            fv(frame)
-        pprint.pprint(wcp.get_configuration_parameters())
+        for timestamp, frame in wcp(6000):
+            # Perform classification in the image.
+            detections = detector.classify(frame)
+            # Plot the results.
+            dv(frame, detections)
 
-# # Capture first and save later.
-# with WebcameraProvider() as wcp:
-#     frames = {}
-#     for timestamp, frame in wcp(30):
-#         frames[timestamp] = frame
-#
-# with FrameSaver() as fs:
-#     for k in sorted(frames.keys()):
-#         fs(frames[k], suffix=utime.epoch_to_string(k))
+            # Listen to ESC key to break the loop.
+            if cv2.waitKey(5) == 27:
+                break
